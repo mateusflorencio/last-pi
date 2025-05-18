@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Categoria {
+  id        Int       @id @default(autoincrement())
+  nome      String    @unique
+  descricao String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  produtos  Produto[]
+}
+
+model Produto {
+  id            Int            @id @default(autoincrement())
+  nome          String
+  descricao     String?
+  codigo        String         @unique
+  preco         Float
+  quantidade    Int            @default(0)
+  estoqueMinimo Int            @default(5)
+  categoriaId   Int
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  movimentacoes Movimentacao[]
+  categoria     Categoria      @relation(fields: [categoriaId], references: [id])
+}
+
+model Movimentacao {
+  id          Int      @id @default(autoincrement())
+  tipo        String
+  quantidade  Int
+  produtoId   Int
+  responsavel String?
+  observacao  String?
+  dataHora    DateTime @default(now())
+  produto     Produto  @relation(fields: [produtoId], references: [id])
+}
